@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import os from "os";
 import gracefulShutdown from "http-graceful-shutdown";
 import app from "./app";
 import cron from "node-cron";
@@ -11,7 +12,37 @@ import BullQueue from './libs/queue';
 import { startQueueProcess } from "./queues";
 // import { ScheduledMessagesJob, ScheduleMessagesGenerateJob, ScheduleMessagesEnvioJob, ScheduleMessagesEnvioForaHorarioJob } from "./wbotScheduledMessages";
 
-const server = app.listen(process.env.PORT, async () => {
+const PORT = process.env.PORT || 4000;
+
+const server = app.listen(PORT, async () => {
+  const addr = server.address();
+  const port = typeof addr === "object" && addr ? addr.port : PORT;
+  const localUrl = `http://localhost:${port}`;
+
+  const nets = os.networkInterfaces();
+  const networkUrls: string[] = [];
+  for (const name of Object.keys(nets || {})) {
+    for (const net of nets[name] || []) {
+      if (net.family === "IPv4" && !net.internal) {
+        networkUrls.push(`http://${net.address}:${port}`);
+      }
+    }
+  }
+
+  console.log("\n----------------------------------------");
+  console.log("  Backend rodando");
+  console.log("----------------------------------------");
+  console.log(`  URL local:   ${localUrl}`);
+  if (networkUrls.length > 0) {
+    networkUrls.forEach((url, i) => {
+      console.log(`  URL rede:    ${url}`);
+    });
+  }
+  console.log(`  Porta:       ${port}`);
+  console.log("----------------------------------------\n");
+
+  logger.info(`Server started on port: ${port}`);
+
   const companies = await Company.findAll({
     where: { status: true },
     attributes: ["id"]
@@ -31,8 +62,6 @@ const server = app.listen(process.env.PORT, async () => {
   if (process.env.REDIS_URI_ACK && process.env.REDIS_URI_ACK !== '') {
     BullQueue.process();
   }
-
-  logger.info(`Server started on port: ${process.env.PORT}`);
 });
 
 process.on("uncaughtException", err => {

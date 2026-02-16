@@ -8,6 +8,7 @@ import ListTicketsService from "../services/TicketServices/ListTicketsService";
 import ShowTicketUUIDService from "../services/TicketServices/ShowTicketFromUUIDService";
 import ShowTicketService from "../services/TicketServices/ShowTicketService";
 import UpdateTicketService from "../services/TicketServices/UpdateTicketService";
+import UpdateTicketContactService from "../services/TicketServices/UpdateTicketContactService";
 import ListTicketsServiceKanban from "../services/TicketServices/ListTicketsServiceKanban";
 
 import CreateLogTicketService from "../services/TicketServices/CreateLogTicketService";
@@ -376,6 +377,18 @@ export const remove = async (
     });
 
   return res.status(200).json({ message: "ticket deleted" });
+};
+
+export const updateContact = async (req: Request, res: Response): Promise<Response> => {
+  const { ticketId } = req.params;
+  const { companyId, id: userId } = req.user;
+  const { contactId } = req.body;
+  const contactIdNum = contactId != null ? parseInt(String(contactId), 10) : NaN;
+  if (!contactIdNum || Number.isNaN(contactIdNum)) {
+    return res.status(400).json({ error: "contactId é obrigatório e deve ser um número" });
+  }
+  const ticket = await UpdateTicketContactService(ticketId, companyId, contactIdNum);
+  return res.status(200).json(ticket);
 };
 
 export const closeAll = async (req: Request, res: Response): Promise<Response> => {

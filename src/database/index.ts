@@ -52,6 +52,9 @@ import { FlowAudioModel } from "../models/FlowAudio";
 import { FlowCampaignModel } from "../models/FlowCampaign";
 import { FlowImgModel } from "../models/FlowImg";
 import { WebhookModel } from "../models/Webhook";
+import TicketQuadro from "../models/TicketQuadro";
+import TicketQuadroAnexo from "../models/TicketQuadroAnexo";
+import QuadroStatusLog from "../models/QuadroStatusLog";
 
 // eslint-disable-next-line
 const dbConfig = require("../config/database");
@@ -111,7 +114,10 @@ const models = [
   FlowAudioModel,
   FlowCampaignModel,
   FlowImgModel,
-  WebhookModel
+  WebhookModel,
+  TicketQuadro,
+  TicketQuadroAnexo,
+  QuadroStatusLog
 ];
 
 sequelize.addModels(models);

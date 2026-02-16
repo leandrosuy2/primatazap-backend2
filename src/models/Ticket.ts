@@ -26,6 +26,9 @@ import Company from "./Company";
 import Tag from "./Tag";
 import TicketTag from "./TicketTag";
 import QueueIntegrations from "./QueueIntegrations";
+import TicketQuadro from "./TicketQuadro";
+import TicketQuadroAnexo from "./TicketQuadroAnexo";
+import QuadroStatusLog from "./QuadroStatusLog";
 import { format } from "date-fns";
 
 
@@ -107,6 +110,15 @@ class Ticket extends Model<Ticket> {
 
   @HasMany(() => TicketTag)
   ticketTags: TicketTag[];
+
+  @HasMany(() => TicketQuadro)
+  quadros: TicketQuadro[];
+
+  @HasMany(() => TicketQuadroAnexo)
+  quadroAnexos: TicketQuadroAnexo[];
+
+  @HasMany(() => QuadroStatusLog)
+  quadroStatusLogs: QuadroStatusLog[];
 
   @BelongsToMany(() => Tag, () => TicketTag)
   tags: Tag[];
