@@ -27,7 +27,7 @@ const CreateTicketServiceWebhook = async ({
   hashFlowId,
   flowStopped
 }: Request): Promise<Ticket> => {
-  const defaultWhatsapp = await GetDefaultWhatsApp(companyId);
+  const defaultWhatsapp = await GetDefaultWhatsApp(undefined, companyId);
 
   await CheckContactOpenTickets(contactId, 0, companyId);
 

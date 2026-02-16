@@ -11,6 +11,7 @@ import Tag from "../../models/Tag";
 import TicketTag from "../../models/TicketTag";
 import { intersection } from "lodash";
 import Whatsapp from "../../models/Whatsapp";
+import TicketQuadroAnexo from "../../models/TicketQuadroAnexo";
 
 interface Request {
   searchParam?: string;
@@ -227,6 +228,22 @@ const ListTicketsServiceKanban = async ({
     subQuery: false
   });
   const hasMore = count > offset + tickets.length;
+
+  const ticketIds = tickets.map((t: Ticket) => t.id);
+  const baseUrl = `${process.env.BACKEND_URL}${process.env.PROXY_PORT ? `:${process.env.PROXY_PORT}` : ""}`;
+  const capaMap: Record<number, string> = {};
+  if (ticketIds.length > 0) {
+    const capas = await TicketQuadroAnexo.findAll({
+      where: { ticketId: { [Op.in]: ticketIds }, isCapa: true },
+      attributes: ["ticketId", "path"]
+    });
+    capas.forEach((c: TicketQuadroAnexo) => {
+      capaMap[c.ticketId] = `${baseUrl}/public/company${companyId}/quadro/${c.ticketId}/${c.path}`;
+    });
+  }
+  tickets.forEach((t: any) => {
+    t.setDataValue("quadroCapaUrl", capaMap[t.id] || null);
+  });
 
   return {
     tickets,

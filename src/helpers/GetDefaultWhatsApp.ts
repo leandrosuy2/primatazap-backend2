@@ -7,11 +7,13 @@ const GetDefaultWhatsApp = async (
   companyId: number | null = null,
   userId?: number
 ): Promise<Whatsapp> => {
+  if (companyId == null || companyId === undefined) {
+    throw new AppError("ERR_NO_DEF_WAPP_FOUND", 400);
+  }
+
   let connection: Whatsapp;
   let defaultWhatsapp = null;
 
-  console.log({ whatsappId, companyId, userId })
-  
   if (whatsappId) {
     defaultWhatsapp = await Whatsapp.findOne({
       where: { id: whatsappId, companyId }

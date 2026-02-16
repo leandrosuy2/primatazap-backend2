@@ -8,7 +8,8 @@ import {
   ForeignKey,
   BelongsTo,
   AutoIncrement,
-  Default
+  Default,
+  DataType
 } from "sequelize-typescript";
 import Ticket from "./Ticket";
 
@@ -30,8 +31,14 @@ class TicketQuadro extends Model<TicketQuadro> {
   @Column
   status: string;
 
-  @Column({ type: "TEXT", allowNull: true })
+  @Column({ type: DataType.TEXT, allowNull: true })
   description: string;
+
+  @Column({ type: DataType.DECIMAL(12, 2), allowNull: true })
+  valorServico: number;
+
+  @Column({ type: DataType.DECIMAL(12, 2), allowNull: true })
+  valorEntrada: number;
 
   @CreatedAt
   createdAt: Date;

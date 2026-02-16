@@ -4,7 +4,7 @@ import GetDefaultWhatsApp from "../../helpers/GetDefaultWhatsApp";
 import { getWbot } from "../../libs/wbot";
 
 const CheckIsValidContact = async (number: string, companyId: number): Promise<void> => {
-  const defaultWhatsapp = await GetDefaultWhatsApp(companyId);
+  const defaultWhatsapp = await GetDefaultWhatsApp(undefined, companyId);
 
   const wbot = getWbot(defaultWhatsapp.id);
   try {

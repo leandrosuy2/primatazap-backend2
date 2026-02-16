@@ -26,6 +26,8 @@ export interface QuadroResponse {
     ticketId: number;
     status: string;
     description: string | null;
+    valorServico: number | null;
+    valorEntrada: number | null;
     updatedAt: Date;
   } | null;
   attachments: Array<{
@@ -99,6 +101,8 @@ const GetQuadroByTicketUuidService = async (
           ticketId: quadro.ticketId,
           status: quadro.status,
           description: quadro.description,
+          valorServico: quadro.valorServico != null ? Number(quadro.valorServico) : null,
+          valorEntrada: quadro.valorEntrada != null ? Number(quadro.valorEntrada) : null,
           updatedAt: quadro.updatedAt
         }
       : null,

@@ -29,9 +29,11 @@ ticketRoutes.delete("/tickets/:ticketUuid/quadro/attachments/:attachmentId", isA
 
 ticketRoutes.post("/tickets", isAuth, TicketController.store);
 
+ticketRoutes.put("/tickets/:ticketId/quadro", isAuth, QuadroController.updateValues);
 ticketRoutes.put("/tickets/:ticketId", isAuth, TicketController.update);
 ticketRoutes.put("/tickets/:ticketId/contact", isAuth, TicketController.updateContact);
 ticketRoutes.post("/tickets/:ticketId/quadro/log", isAuth, QuadroController.createLog);
+ticketRoutes.get("/tickets/:ticketId/quadro/logs", isAuth, QuadroController.listLogs);
 
 ticketRoutes.get("/tickets/:ticketId", isAuth, TicketController.show);
 

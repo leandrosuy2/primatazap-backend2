@@ -7,6 +7,7 @@ import SetQuadroAttachmentCapaService from "../services/QuadroServices/SetQuadro
 import DeleteQuadroAttachmentService from "../services/QuadroServices/DeleteQuadroAttachmentService";
 import CreateQuadroLogService from "../services/QuadroServices/CreateQuadroLogService";
 import ListQuadroLogsService from "../services/QuadroServices/ListQuadroLogsService";
+import UpdateQuadroValuesService from "../services/QuadroServices/UpdateQuadroValuesService";
 
 export const getQuadro = async (req: Request, res: Response): Promise<Response> => {
   const { ticketUuid } = req.params;
@@ -25,6 +26,8 @@ export const updateStatus = async (req: Request, res: Response): Promise<Respons
       ticketId: quadro.ticketId,
       status: quadro.status,
       description: quadro.description,
+      valorServico: quadro.valorServico != null ? Number(quadro.valorServico) : null,
+      valorEntrada: quadro.valorEntrada != null ? Number(quadro.valorEntrada) : null,
       updatedAt: quadro.updatedAt
     }
   });
@@ -40,6 +43,8 @@ export const updateDescription = async (req: Request, res: Response): Promise<Re
       ticketId: quadro.ticketId,
       status: quadro.status,
       description: quadro.description,
+      valorServico: quadro.valorServico != null ? Number(quadro.valorServico) : null,
+      valorEntrada: quadro.valorEntrada != null ? Number(quadro.valorEntrada) : null,
       updatedAt: quadro.updatedAt
     }
   });
@@ -68,9 +73,10 @@ export const setAttachmentCapa = async (req: Request, res: Response): Promise<Re
 };
 
 export const deleteAttachment = async (req: Request, res: Response): Promise<Response> => {
-  const { ticketUuid, attachmentId } = req.params;
+  const ticketUuidOrId = req.params.ticketUuid ?? req.params.ticketId;
+  const { attachmentId } = req.params;
   const { companyId } = req.user;
-  await DeleteQuadroAttachmentService(ticketUuid, companyId, parseInt(attachmentId, 10));
+  await DeleteQuadroAttachmentService(ticketUuidOrId, companyId, parseInt(attachmentId, 10));
   return res.status(204).send();
 };
 
@@ -90,9 +96,33 @@ export const createLog = async (req: Request, res: Response): Promise<Response> 
   return res.status(200).json({ ok: true });
 };
 
-export const listLogs = async (req: Request, res: Response): Promise<Response> => {
-  const { ticketUuid } = req.params;
+export const updateValues = async (req: Request, res: Response): Promise<Response> => {
+  const { ticketId } = req.params;
   const { companyId } = req.user;
-  const data = await ListQuadroLogsService(ticketUuid, companyId);
+  const { valorServico, valorEntrada } = req.body;
+  const valorServicoNum = valorServico != null ? Number(valorServico) : null;
+  const valorEntradaNum = valorEntrada != null ? Number(valorEntrada) : null;
+  const quadro = await UpdateQuadroValuesService(
+    parseInt(ticketId, 10),
+    companyId,
+    valorServicoNum,
+    valorEntradaNum
+  );
+  return res.status(200).json({
+    quadro: {
+      ticketId: quadro.ticketId,
+      status: quadro.status,
+      description: quadro.description,
+      valorServico: quadro.valorServico != null ? Number(quadro.valorServico) : null,
+      valorEntrada: quadro.valorEntrada != null ? Number(quadro.valorEntrada) : null,
+      updatedAt: quadro.updatedAt
+    }
+  });
+};
+
+export const listLogs = async (req: Request, res: Response): Promise<Response> => {
+  const ticketUuidOrId = req.params.ticketUuid ?? req.params.ticketId;
+  const { companyId } = req.user;
+  const data = await ListQuadroLogsService(ticketUuidOrId, companyId);
   return res.status(200).json(data);
 };
