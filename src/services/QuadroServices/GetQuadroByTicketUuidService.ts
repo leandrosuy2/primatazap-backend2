@@ -28,6 +28,10 @@ export interface QuadroResponse {
     description: string | null;
     valorServico: number | null;
     valorEntrada: number | null;
+    nomeProjeto: string | null;
+    customFields: any[];
+    quadroGroupId: number | null;
+    sharedGroupIds: number[];
     updatedAt: Date;
   } | null;
   attachments: Array<{
@@ -103,6 +107,10 @@ const GetQuadroByTicketUuidService = async (
           description: quadro.description,
           valorServico: quadro.valorServico != null ? Number(quadro.valorServico) : null,
           valorEntrada: quadro.valorEntrada != null ? Number(quadro.valorEntrada) : null,
+          nomeProjeto: quadro.nomeProjeto ?? null,
+          customFields: quadro.customFields ?? [],
+          quadroGroupId: quadro.quadroGroupId ?? null,
+          sharedGroupIds: quadro.sharedGroupIds ?? [],
           updatedAt: quadro.updatedAt
         }
       : null,

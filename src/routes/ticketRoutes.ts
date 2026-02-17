@@ -34,6 +34,7 @@ ticketRoutes.put("/tickets/:ticketId", isAuth, TicketController.update);
 ticketRoutes.put("/tickets/:ticketId/contact", isAuth, TicketController.updateContact);
 ticketRoutes.post("/tickets/:ticketId/quadro/log", isAuth, QuadroController.createLog);
 ticketRoutes.get("/tickets/:ticketId/quadro/logs", isAuth, QuadroController.listLogs);
+ticketRoutes.post("/tickets/:ticketId/quadro/share", isAuth, QuadroController.share);
 
 ticketRoutes.get("/tickets/:ticketId", isAuth, TicketController.show);
 

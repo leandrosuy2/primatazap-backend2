@@ -5,41 +5,41 @@ import {
   UpdatedAt,
   Model,
   PrimaryKey,
+  AutoIncrement,
+  AllowNull,
+  Default,
   ForeignKey,
   BelongsTo,
-  AutoIncrement,
-  Default,
-  AllowNull
+  DataType
 } from "sequelize-typescript";
-import Ticket from "./Ticket";
 import Company from "./Company";
 
-@Table({ tableName: "TicketQuadroAnexos" })
-class TicketQuadroAnexo extends Model<TicketQuadroAnexo> {
+@Table({ tableName: "QuadroStatuses" })
+class QuadroStatus extends Model<QuadroStatus> {
   @PrimaryKey
   @AutoIncrement
   @Column
   id: number;
 
-  @ForeignKey(() => Ticket)
+  @AllowNull(false)
   @Column
-  ticketId: number;
+  label: string;
 
-  @BelongsTo(() => Ticket)
-  ticket: Ticket;
-
+  @AllowNull(false)
   @Column
-  name: string;
+  value: string;
 
-  @Column
-  path: string;
+  @AllowNull(false)
+  @Default("#9e9e9e")
+  @Column(DataType.STRING(9))
+  color: string;
 
-  @Default(false)
+  @AllowNull(false)
+  @Default(0)
   @Column
-  isCapa: boolean;
+  sortOrder: number;
 
   @ForeignKey(() => Company)
-  @AllowNull(true)
   @Column
   companyId: number;
 
@@ -53,4 +53,4 @@ class TicketQuadroAnexo extends Model<TicketQuadroAnexo> {
   updatedAt: Date;
 }
 
-export default TicketQuadroAnexo;
+export default QuadroStatus;

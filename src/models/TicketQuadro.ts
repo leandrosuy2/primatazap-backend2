@@ -9,9 +9,14 @@ import {
   BelongsTo,
   AutoIncrement,
   Default,
-  DataType
+  DataType,
+  AllowNull,
+  HasMany
 } from "sequelize-typescript";
 import Ticket from "./Ticket";
+import QuadroGroup from "./QuadroGroup";
+import Company from "./Company";
+import TicketQuadroAnexo from "./TicketQuadroAnexo";
 
 @Table({ tableName: "TicketQuadros" })
 class TicketQuadro extends Model<TicketQuadro> {
@@ -39,6 +44,55 @@ class TicketQuadro extends Model<TicketQuadro> {
 
   @Column({ type: DataType.DECIMAL(12, 2), allowNull: true })
   valorEntrada: number;
+
+  @AllowNull(true)
+  @Column
+  nomeProjeto: string;
+
+  @Column({ type: DataType.TEXT, allowNull: true })
+  get customFields(): any {
+    const raw = this.getDataValue("customFields" as any);
+    if (!raw) return [];
+    if (typeof raw === "string") {
+      try { return JSON.parse(raw); } catch { return []; }
+    }
+    return raw;
+  }
+  set customFields(val: any) {
+    this.setDataValue("customFields" as any, val ? JSON.stringify(val) : null);
+  }
+
+  @ForeignKey(() => QuadroGroup)
+  @AllowNull(true)
+  @Column
+  quadroGroupId: number;
+
+  @BelongsTo(() => QuadroGroup)
+  group: QuadroGroup;
+
+  @Column({ type: DataType.TEXT, allowNull: true })
+  get sharedGroupIds(): number[] {
+    const raw = this.getDataValue("sharedGroupIds" as any);
+    if (!raw) return [];
+    if (typeof raw === "string") {
+      try { return JSON.parse(raw); } catch { return []; }
+    }
+    return raw as number[];
+  }
+  set sharedGroupIds(val: number[]) {
+    this.setDataValue("sharedGroupIds" as any, val ? JSON.stringify(val) : null);
+  }
+
+  @ForeignKey(() => Company)
+  @AllowNull(true)
+  @Column
+  companyId: number;
+
+  @BelongsTo(() => Company)
+  company: Company;
+
+  @HasMany(() => TicketQuadroAnexo, { foreignKey: "ticketId", sourceKey: "ticketId" })
+  attachments: TicketQuadroAnexo[];
 
   @CreatedAt
   createdAt: Date;

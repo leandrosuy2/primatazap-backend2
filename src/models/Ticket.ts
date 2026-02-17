@@ -29,6 +29,7 @@ import QueueIntegrations from "./QueueIntegrations";
 import TicketQuadro from "./TicketQuadro";
 import TicketQuadroAnexo from "./TicketQuadroAnexo";
 import QuadroStatusLog from "./QuadroStatusLog";
+import QuadroGroup from "./QuadroGroup";
 import { format } from "date-fns";
 
 
@@ -119,6 +120,13 @@ class Ticket extends Model<Ticket> {
 
   @HasMany(() => QuadroStatusLog)
   quadroStatusLogs: QuadroStatusLog[];
+
+  @ForeignKey(() => QuadroGroup)
+  @Column
+  quadroGroupId: number;
+
+  @BelongsTo(() => QuadroGroup)
+  quadroGroup: QuadroGroup;
 
   @BelongsToMany(() => Tag, () => TicketTag)
   tags: Tag[];

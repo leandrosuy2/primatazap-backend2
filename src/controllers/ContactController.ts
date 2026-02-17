@@ -26,6 +26,7 @@ import CreateOrUpdateContactServiceForImport from "../services/ContactServices/C
 import UpdateContactWalletsService from "../services/ContactServices/UpdateContactWalletsService";
 
 import FindContactTags from "../services/ContactServices/FindContactTags";
+import ListContactProcessesService from "../services/QuadroServices/ListContactProcessesService";
 import { log } from "console";
 import ToggleDisableBotContactService from "../services/ContactServices/ToggleDisableBotContactService";
 import GetDefaultWhatsApp from "../helpers/GetDefaultWhatsApp";
@@ -503,4 +504,11 @@ export const getContactProfileURL = async (req: Request, res: Response) => {
     const contacts = contactsAll.filter(contact => contact.channel == "whatsapp");
 
     return res.json(contacts);
+  };
+
+  export const processes = async (req: Request, res: Response): Promise<Response> => {
+    const { contactId } = req.params;
+    const { companyId } = req.user;
+    const processesData = await ListContactProcessesService(parseInt(contactId, 10), companyId);
+    return res.status(200).json({ processes: processesData });
   };

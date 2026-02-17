@@ -12,6 +12,7 @@ import {
 } from "sequelize-typescript";
 import Ticket from "./Ticket";
 import User from "./User";
+import Company from "./Company";
 
 @Table({ tableName: "QuadroStatusLogs" })
 class QuadroStatusLog extends Model<QuadroStatusLog> {
@@ -49,6 +50,14 @@ class QuadroStatusLog extends Model<QuadroStatusLog> {
 
   @BelongsTo(() => User)
   user: User;
+
+  @ForeignKey(() => Company)
+  @AllowNull(true)
+  @Column
+  companyId: number;
+
+  @BelongsTo(() => Company)
+  company: Company;
 
   @CreatedAt
   createdAt: Date;

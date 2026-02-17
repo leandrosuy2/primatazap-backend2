@@ -55,6 +55,8 @@ import { WebhookModel } from "../models/Webhook";
 import TicketQuadro from "../models/TicketQuadro";
 import TicketQuadroAnexo from "../models/TicketQuadroAnexo";
 import QuadroStatusLog from "../models/QuadroStatusLog";
+import QuadroGroup from "../models/QuadroGroup";
+import QuadroStatus from "../models/QuadroStatus";
 
 // eslint-disable-next-line
 const dbConfig = require("../config/database");
@@ -117,7 +119,9 @@ const models = [
   WebhookModel,
   TicketQuadro,
   TicketQuadroAnexo,
-  QuadroStatusLog
+  QuadroStatusLog,
+  QuadroGroup,
+  QuadroStatus
 ];
 
 sequelize.addModels(models);

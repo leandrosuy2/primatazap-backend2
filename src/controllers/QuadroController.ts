@@ -8,6 +8,7 @@ import DeleteQuadroAttachmentService from "../services/QuadroServices/DeleteQuad
 import CreateQuadroLogService from "../services/QuadroServices/CreateQuadroLogService";
 import ListQuadroLogsService from "../services/QuadroServices/ListQuadroLogsService";
 import UpdateQuadroValuesService from "../services/QuadroServices/UpdateQuadroValuesService";
+import ShareTicketQuadroService from "../services/QuadroServices/ShareTicketQuadroService";
 
 export const getQuadro = async (req: Request, res: Response): Promise<Response> => {
   const { ticketUuid } = req.params;
@@ -99,14 +100,16 @@ export const createLog = async (req: Request, res: Response): Promise<Response> 
 export const updateValues = async (req: Request, res: Response): Promise<Response> => {
   const { ticketId } = req.params;
   const { companyId } = req.user;
-  const { valorServico, valorEntrada } = req.body;
+  const { valorServico, valorEntrada, nomeProjeto, customFields } = req.body;
   const valorServicoNum = valorServico != null ? Number(valorServico) : null;
   const valorEntradaNum = valorEntrada != null ? Number(valorEntrada) : null;
   const quadro = await UpdateQuadroValuesService(
     parseInt(ticketId, 10),
     companyId,
     valorServicoNum,
-    valorEntradaNum
+    valorEntradaNum,
+    nomeProjeto,
+    customFields
   );
   return res.status(200).json({
     quadro: {
@@ -115,9 +118,25 @@ export const updateValues = async (req: Request, res: Response): Promise<Respons
       description: quadro.description,
       valorServico: quadro.valorServico != null ? Number(quadro.valorServico) : null,
       valorEntrada: quadro.valorEntrada != null ? Number(quadro.valorEntrada) : null,
+      nomeProjeto: quadro.nomeProjeto ?? null,
+      customFields: quadro.customFields ?? [],
+      quadroGroupId: quadro.quadroGroupId ?? null,
+      sharedGroupIds: quadro.sharedGroupIds ?? [],
       updatedAt: quadro.updatedAt
     }
   });
+};
+
+export const share = async (req: Request, res: Response): Promise<Response> => {
+  const { ticketId } = req.params;
+  const { companyId } = req.user;
+  const { groupIds } = req.body;
+  const quadro = await ShareTicketQuadroService({
+    ticketId: parseInt(ticketId, 10),
+    groupIds,
+    companyId
+  });
+  return res.status(200).json(quadro);
 };
 
 export const listLogs = async (req: Request, res: Response): Promise<Response> => {

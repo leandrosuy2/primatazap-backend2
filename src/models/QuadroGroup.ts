@@ -5,41 +5,26 @@ import {
   UpdatedAt,
   Model,
   PrimaryKey,
+  AutoIncrement,
+  AllowNull,
   ForeignKey,
   BelongsTo,
-  AutoIncrement,
-  Default,
-  AllowNull
+  HasMany
 } from "sequelize-typescript";
-import Ticket from "./Ticket";
 import Company from "./Company";
 
-@Table({ tableName: "TicketQuadroAnexos" })
-class TicketQuadroAnexo extends Model<TicketQuadroAnexo> {
+@Table({ tableName: "QuadroGroups" })
+class QuadroGroup extends Model<QuadroGroup> {
   @PrimaryKey
   @AutoIncrement
   @Column
   id: number;
 
-  @ForeignKey(() => Ticket)
-  @Column
-  ticketId: number;
-
-  @BelongsTo(() => Ticket)
-  ticket: Ticket;
-
+  @AllowNull(false)
   @Column
   name: string;
 
-  @Column
-  path: string;
-
-  @Default(false)
-  @Column
-  isCapa: boolean;
-
   @ForeignKey(() => Company)
-  @AllowNull(true)
   @Column
   companyId: number;
 
@@ -53,4 +38,4 @@ class TicketQuadroAnexo extends Model<TicketQuadroAnexo> {
   updatedAt: Date;
 }
 
-export default TicketQuadroAnexo;
+export default QuadroGroup;
