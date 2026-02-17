@@ -24,6 +24,17 @@ interface ContactData {
   disableBot?: boolean;
   remoteJid?: string;
   wallets?: null | number[] | string[];
+  country?: string;
+  city?: string;
+  state?: string;
+  leadOrigin?: string;
+  entryDate?: string;
+  exitDate?: string;
+  dealValue?: number;
+  companyName?: string;
+  position?: string;
+  productsInterest?: string;
+  observation?: string;
 }
 
 interface Request {
@@ -37,11 +48,17 @@ const UpdateContactService = async ({
   contactId,
   companyId
 }: Request): Promise<Contact> => {
-  const { email, name, number, extraInfo, acceptAudioMessage, active, disableBot, remoteJid, wallets } = contactData;
+  const {
+    email, name, number, extraInfo, acceptAudioMessage, active, disableBot, remoteJid, wallets,
+    country, city, state, leadOrigin, entryDate, exitDate, dealValue, companyName, position, productsInterest, observation
+  } = contactData;
 
   const contact = await Contact.findOne({
     where: { id: contactId },
-    attributes: ["id", "name", "number", "channel", "email", "companyId", "acceptAudioMessage", "active", "profilePicUrl", "remoteJid", "urlPicture"],
+    attributes: [
+      "id", "name", "number", "channel", "email", "companyId", "acceptAudioMessage", "active", "profilePicUrl", "remoteJid", "urlPicture",
+      "country", "city", "state", "leadOrigin", "entryDate", "exitDate", "dealValue", "companyName", "position", "productsInterest", "observation"
+    ],
     include: ["extraInfo", "tags",
       {
         association: "wallets",
@@ -103,11 +120,25 @@ const UpdateContactService = async ({
     acceptAudioMessage,
     active,
     disableBot,
-    remoteJid
+    remoteJid,
+    country,
+    city,
+    state,
+    leadOrigin,
+    entryDate,
+    exitDate,
+    dealValue,
+    companyName,
+    position,
+    productsInterest,
+    observation
   });
 
   await contact.reload({
-    attributes: ["id", "name", "number", "channel", "email", "companyId", "acceptAudioMessage", "active", "profilePicUrl", "remoteJid", "urlPicture"],
+    attributes: [
+      "id", "name", "number", "channel", "email", "companyId", "acceptAudioMessage", "active", "profilePicUrl", "remoteJid", "urlPicture",
+      "country", "city", "state", "leadOrigin", "entryDate", "exitDate", "dealValue", "companyName", "position", "productsInterest", "observation"
+    ],
     include: ["extraInfo", "tags",
       {
         association: "wallets",

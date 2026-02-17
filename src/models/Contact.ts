@@ -12,7 +12,8 @@ import {
   HasMany,
   ForeignKey,
   BelongsTo,
-  BelongsToMany
+  BelongsToMany,
+  DataType
 } from "sequelize-typescript";
 import ContactCustomField from "./ContactCustomField";
 import Ticket from "./Ticket";
@@ -67,6 +68,40 @@ class Contact extends Model<Contact> {
   @Default("whatsapp")
   @Column
   channel: string;
+
+  @Column
+  country: string;
+
+  @Column
+  city: string;
+
+  @Column
+  state: string;
+
+  @Column
+  leadOrigin: string;
+
+  @Column(DataType.DATEONLY)
+  entryDate: string;
+
+  @Column(DataType.DATEONLY)
+  exitDate: string;
+
+  @Default(0)
+  @Column(DataType.DECIMAL(10, 2))
+  dealValue: number;
+
+  @Column
+  companyName: string;
+
+  @Column
+  position: string;
+
+  @Column(DataType.TEXT)
+  productsInterest: string;
+
+  @Column(DataType.TEXT)
+  observation: string;
 
   @CreatedAt
   createdAt: Date;

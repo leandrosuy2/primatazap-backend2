@@ -58,6 +58,17 @@ interface ContactData {
   disableBot?: boolean;
   remoteJid?: string;
   wallets?: null | number[] | string[];
+  country?: string;
+  city?: string;
+  state?: string;
+  leadOrigin?: string;
+  entryDate?: string;
+  exitDate?: string;
+  dealValue?: number;
+  companyName?: string;
+  position?: string;
+  productsInterest?: string;
+  observation?: string;
 }
 
 
