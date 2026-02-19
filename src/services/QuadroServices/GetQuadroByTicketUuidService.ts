@@ -32,6 +32,9 @@ export interface QuadroResponse {
     customFields: any[];
     quadroGroupId: number | null;
     sharedGroupIds: number[];
+    quadroSharedGroupIds?: number[];
+    quadroLinkType?: string;
+    quadroSharedStagesByGroup?: Record<string, number[]>;
     updatedAt: Date;
   } | null;
   attachments: Array<{
@@ -111,6 +114,9 @@ const GetQuadroByTicketUuidService = async (
           customFields: quadro.customFields ?? [],
           quadroGroupId: quadro.quadroGroupId ?? null,
           sharedGroupIds: quadro.sharedGroupIds ?? [],
+          quadroSharedGroupIds: quadro.sharedGroupIds ?? [],
+          quadroLinkType: quadro.linkType ?? "linked",
+          quadroSharedStagesByGroup: quadro.sharedStagesByGroup ?? {},
           updatedAt: quadro.updatedAt
         }
       : null,

@@ -219,9 +219,9 @@ export const kanban = async (req: Request, res: Response): Promise<Response> => 
     queueIds: queueIdsStringified,
     tags: tagIdsStringified,
     users: userIdsStringified,
-    withUnreadMessages
-  } = req.query as IndexQuery;
-
+    withUnreadMessages,
+    quadroGroupId
+  } = req.query as IndexQuery & { quadroGroupId?: string };
 
   const userId = req.user.id;
   const { companyId } = req.user;
@@ -256,8 +256,8 @@ export const kanban = async (req: Request, res: Response): Promise<Response> => 
     userId,
     queueIds,
     withUnreadMessages,
-    companyId
-
+    companyId,
+    quadroGroupId
   });
 
   return res.status(200).json({ tickets, count, hasMore });

@@ -57,6 +57,9 @@ import TicketQuadroAnexo from "../models/TicketQuadroAnexo";
 import QuadroStatusLog from "../models/QuadroStatusLog";
 import QuadroGroup from "../models/QuadroGroup";
 import QuadroStatus from "../models/QuadroStatus";
+import TicketEvento from "../models/TicketEvento";
+import TicketAnotacao from "../models/TicketAnotacao";
+import TicketLembrete from "../models/TicketLembrete";
 
 // eslint-disable-next-line
 const dbConfig = require("../config/database");
@@ -121,7 +124,10 @@ const models = [
   TicketQuadroAnexo,
   QuadroStatusLog,
   QuadroGroup,
-  QuadroStatus
+  QuadroStatus,
+  TicketEvento,
+  TicketAnotacao,
+  TicketLembrete
 ];
 
 sequelize.addModels(models);

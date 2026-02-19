@@ -7,7 +7,9 @@ import DeleteQuadroGroupService from "../services/QuadroServices/DeleteQuadroGro
 export const index = async (req: Request, res: Response): Promise<Response> => {
   const { companyId } = req.user;
   const groups = await ListQuadroGroupsService(companyId);
-  return res.status(200).json(groups);
+  return res.status(200).json({
+    groups: groups.map((g) => ({ id: g.id, name: g.name }))
+  });
 };
 
 export const store = async (req: Request, res: Response): Promise<Response> => {

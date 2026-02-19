@@ -12,6 +12,7 @@ import TicketTag from "../../models/TicketTag";
 import { intersection } from "lodash";
 import Whatsapp from "../../models/Whatsapp";
 import TicketQuadroAnexo from "../../models/TicketQuadroAnexo";
+import TicketQuadro from "../../models/TicketQuadro";
 
 interface Request {
   searchParam?: string;
@@ -28,6 +29,7 @@ interface Request {
   tags: number[];
   users: number[];
   companyId: number;
+  quadroGroupId?: number | string;
 }
 
 interface Response {
@@ -50,7 +52,8 @@ const ListTicketsServiceKanban = async ({
   showAll,
   userId,
   withUnreadMessages,
-  companyId
+  companyId,
+  quadroGroupId
 }: Request): Promise<Response> => {
   let whereCondition: Filterable["where"] = {
     [Op.or]: [{ userId }, { status: "pending" }],
@@ -218,6 +221,35 @@ const ListTicketsServiceKanban = async ({
     companyId
   };
 
+  if (quadroGroupId != null && quadroGroupId !== "") {
+    const groupIdNum = typeof quadroGroupId === "string" ? parseInt(quadroGroupId, 10) : quadroGroupId;
+    if (!isNaN(groupIdNum)) {
+      const ticketsInGroup = await Ticket.findAll({
+        where: { companyId, quadroGroupId: groupIdNum },
+        attributes: ["id"]
+      });
+      const ticketIdsMain = ticketsInGroup.map((t) => t.id);
+      const quadrosAll = await TicketQuadro.findAll({
+        where: { companyId },
+        attributes: ["ticketId", "quadroGroupId", "sharedGroupIds"]
+      });
+      const ticketIdsFromQuadroMain = quadrosAll
+        .filter((q) => q.quadroGroupId === groupIdNum)
+        .map((q) => q.ticketId);
+      const ticketIdsShared = quadrosAll
+        .filter((q) => (q.sharedGroupIds || []).includes(groupIdNum))
+        .map((q) => q.ticketId);
+      const allTicketIds = [...new Set([...ticketIdsMain, ...ticketIdsFromQuadroMain, ...ticketIdsShared])];
+      if (allTicketIds.length === 0) {
+        return { tickets: [], count: 0, hasMore: false };
+      }
+      whereCondition = {
+        ...whereCondition,
+        id: { [Op.in]: allTicketIds }
+      };
+    }
+  }
+
   const { count, rows: tickets } = await Ticket.findAndCountAll({
     where: whereCondition,
     include: includeCondition,
@@ -241,8 +273,49 @@ const ListTicketsServiceKanban = async ({
       capaMap[c.ticketId] = `${baseUrl}/public/company${companyId}/quadro/${c.ticketId}/${c.path}`;
     });
   }
+
+  const quadroMap: Record<
+    number,
+    {
+      nomeProjeto: string | null;
+      valorServico: number | null;
+      valorEntrada: number | null;
+      customFields: any[];
+      sharedGroupIds: number[];
+    }
+  > = {};
+  if (ticketIds.length > 0) {
+    const quadros = await TicketQuadro.findAll({
+      where: { ticketId: { [Op.in]: ticketIds } },
+      attributes: ["ticketId", "nomeProjeto", "valorServico", "valorEntrada", "customFields", "sharedGroupIds"]
+    });
+    quadros.forEach((q: TicketQuadro) => {
+      quadroMap[q.ticketId] = {
+        nomeProjeto: q.nomeProjeto ?? null,
+        valorServico: q.valorServico != null ? Number(q.valorServico) : null,
+        valorEntrada: q.valorEntrada != null ? Number(q.valorEntrada) : null,
+        customFields: q.customFields ?? [],
+        sharedGroupIds: q.sharedGroupIds ?? []
+      };
+    });
+  }
+
   tickets.forEach((t: any) => {
     t.setDataValue("quadroCapaUrl", capaMap[t.id] || null);
+    const q = quadroMap[t.id];
+    if (q) {
+      t.setDataValue("nomeProjeto", q.nomeProjeto);
+      t.setDataValue("quadroValorServico", q.valorServico);
+      t.setDataValue("quadroValorEntrada", q.valorEntrada);
+      t.setDataValue("quadroCustomFields", q.customFields);
+      t.setDataValue("quadroSharedGroupIds", q.sharedGroupIds);
+    } else {
+      t.setDataValue("nomeProjeto", null);
+      t.setDataValue("quadroValorServico", null);
+      t.setDataValue("quadroValorEntrada", null);
+      t.setDataValue("quadroCustomFields", []);
+      t.setDataValue("quadroSharedGroupIds", []);
+    }
   });
 
   return {

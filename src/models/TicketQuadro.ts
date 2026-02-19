@@ -83,6 +83,23 @@ class TicketQuadro extends Model<TicketQuadro> {
     this.setDataValue("sharedGroupIds" as any, val ? JSON.stringify(val) : null);
   }
 
+  @Default("linked")
+  @Column({ type: DataType.STRING(20), allowNull: true })
+  linkType: string;
+
+  @Column({ type: DataType.TEXT, allowNull: true })
+  get sharedStagesByGroup(): Record<string, number[]> {
+    const raw = this.getDataValue("sharedStagesByGroup" as any);
+    if (!raw) return {};
+    if (typeof raw === "string") {
+      try { return JSON.parse(raw); } catch { return {}; }
+    }
+    return raw as Record<string, number[]>;
+  }
+  set sharedStagesByGroup(val: Record<string, number[]>) {
+    this.setDataValue("sharedStagesByGroup" as any, val && Object.keys(val).length ? JSON.stringify(val) : null);
+  }
+
   @ForeignKey(() => Company)
   @AllowNull(true)
   @Column
